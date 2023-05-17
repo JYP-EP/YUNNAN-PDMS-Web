@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gridnt.pdms.mapper.WarningEventMapper">
+    <select id="getHistoryEvent" resultType="WarningEventEntity">
+        select
+            F1041_DESC as substationName,
+            F1041_DQNAME as operator,
+            F1042_DESC as bayName,
+            F1046_DESC as deviceName,
+            DSCB as targetName,
+            YMD as date,
+            HMSMS as time,
+            `TEXT` as description
+        from
+            TB_HIS_EVENT the, TB1041_SUBSTATION ts, TB1042_BAY tb, TB_OBJECT_DESC tod, TB1046_IED ied
+        where
+            the.`OBJECT` = tod.code
+        and
+            the.substation = ts.F1041_CODE
+        and
+            the.bay = tb.F1042_CODE
+        and
+            tod.ied = ied.F1046_CODE
+        <if test="queryFilter.startTime!=null and queryFilter.startTime.trim()!=''">
+            and the.YMD >= #{queryFilter.startDate}
+        </if>
+        <if test="queryFilter.endTime!=null and queryFilter.endTime.trim()!=''">
+            and the.YMD &lt;= #{queryFilter.endDate}
+        </if>
+        <if test="queryFilter.station!=null and queryFilter.station.trim()!=''">
+            and tiw.substation_code = #{queryFilter.station}
+        </if>
+        <if test="queryFilter.device!=null and queryFilter.device.trim()!=''">
+            and tiw.ied_code = #{queryFilter.device}
+        </if>
+        order by YMD, HMSMS
+    </select>
+    <select id="getWarningEventStat" resultType="WarningEventStat">
+        select
+            count(*) as frequency,
+            F1041_DESC as substation
+        from
+            TB_HIS_EVENT the, TB1041_SUBSTATION ts, TB1042_BAY tb, TB_OBJECT_DESC tod, TB1046_IED ied
+        where
+            the.`OBJECT` = tod.code
+        and
+            the.substation = ts.F1041_CODE
+        and
+            the.bay = tb.F1042_CODE
+        and
+            tod.ied = ied.F1046_CODE
+        <if test="queryFilter.startTime!=null and queryFilter.startTime.trim()!=''">
+            and the.YMD >= #{queryFilter.startDate}
+        </if>
+        <if test="queryFilter.endTime!=null and queryFilter.endTime.trim()!=''">
+            and the.YMD &lt;= #{queryFilter.endDate}
+        </if>
+        <if test="queryFilter.station!=null and queryFilter.station.trim()!=''">
+            and tiw.substation_code = #{queryFilter.station}
+        </if>
+        <if test="queryFilter.device!=null and queryFilter.device.trim()!=''">
+            and tiw.ied_code = #{queryFilter.device}
+        </if>
+        group by F1041_DESC
+    </select>
+</mapper>

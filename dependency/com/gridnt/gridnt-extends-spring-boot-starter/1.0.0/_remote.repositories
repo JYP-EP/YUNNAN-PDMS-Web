@@ -1,0 +1,8 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Thu Jun 24 11:29:27 CST 2021
+gridnt-extends-spring-boot-starter-1.0.0-sources.jar>=
+gridnt-extends-spring-boot-starter-1.0.0.jar>gridnt_repo=
+gridnt-extends-spring-boot-starter-1.0.0.pom>gridnt_repo=
+gridnt-extends-spring-boot-starter-1.0.0-sources.jar>gridnt_repo=
+gridnt-extends-spring-boot-starter-1.0.0.jar>=
+gridnt-extends-spring-boot-starter-1.0.0.pom>=

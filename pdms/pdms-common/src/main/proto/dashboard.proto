@@ -1,0 +1,29 @@
+//使用proto3语法
+syntax = "proto3";
+
+//proto包名
+package domain;
+//生成多个Java文件
+option java_multiple_files = true;
+//指定Java包名
+option java_package = "com.pdms.grpc.domain";
+//指定Java输出类名
+option java_outer_classname = "DashBoardProto";
+
+//gRPC服务定义
+service DashBoard {
+  //gRPC服务通用方法定义 - Unary
+  rpc GetDashBoardGrpcData (GrpcCommonRequest) returns (GrpcCommonReply) {}
+}
+//请求站所参数定义
+message GrpcCommonRequest {
+  string request = 1;
+}
+message GrpcCommonReply {
+  string reply = 1;
+}
+
+//方法约定
+// methodCode:substationStatusData(入参含methodCode,substationId，需要返回status、onlineRate、mmsRate、gooseRate、smvRate、warningNumber、lockNumber、procStatusNumber)
+// methodCode:warningInfoList (入参含methodCode,需要返回 stationName、type、warningNumber的列表)
+// methodCode:allSubstationData (入参含methodCode,需要返回onlineRate、mmsRate、gooseRate、smvRate)

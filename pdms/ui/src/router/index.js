@@ -1,0 +1,181 @@
+import Vue from 'vue';
+import Router from 'vue-router';
+
+Vue.use(Router);
+
+/* Layout */
+import Layout from '@/layout';
+import GridntLayout from '@/gridntlayout';
+import ParentView from '@/components/ParentView';
+
+/**
+ * Note: 路由配置项
+ *
+ * hidden: true                   // 当设置 true 的时候该路由不会再侧边栏出现 如401，login等页面，或者如一些编辑页面/edit/1
+ * alwaysShow: true               // 当你一个路由下面的 children 声明的路由大于1个时，自动会变成嵌套的模式--如组件页面
+ *                                // 只有一个时，会将那个子路由当做根路由显示在侧边栏--如引导页面
+ *                                // 若你想不管路由下面的 children 声明的个数都显示你的根路由
+ *                                // 你可以设置 alwaysShow: true，这样它就会忽略之前定义的规则，一直显示根路由
+ * redirect: noRedirect           // 当设置 noRedirect 的时候该路由在面包屑导航中不可被点击
+ * name:'router-name'             // 设定路由的名字，一定要填写不然使用<keep-alive>时会出现各种问题
+ * meta : {
+    noCache: true                // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
+    title: 'title'               // 设置该路由在侧边栏和面包屑中展示的名字
+    icon: 'svg-name'             // 设置该路由的图标，对应路径src/assets/icons/svg
+    breadcrumb: false            // 如果设置为false，则不会在breadcrumb面包屑中显示
+  }
+ */
+// 解决ElementUI导航栏中的vue-router在3.0版本以上重复点菜单报错问题
+const originalPush = Router.prototype.push
+Router.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+
+// 公共路由
+export const constantRoutes = [
+  {
+    path: '/redirect',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/redirect/:path(.*)',
+        component: resolve => require(['@/views/redirect'], resolve)
+      }
+    ]
+  },
+  {
+    path: '/login',
+    component: resolve => require(['@/views/login'], resolve),
+    hidden: true
+  },
+  {
+    path: '/404',
+    component: resolve => require(['@/views/error/404'], resolve),
+    hidden: true
+  },
+  {
+    path: '/resetPwd',
+    component: resolve => require(['@/views/system/user/profile/resetPwd1'], resolve),
+    hidden: true
+  },
+  {
+    path: '/401',
+    component: resolve => require(['@/views/error/401'], resolve),
+    hidden: true
+  },
+  {
+    path: '',
+    component: GridntLayout,
+    redirect: window.WebConfig.menuconfig.activeIndex2,
+    children: [
+      {
+        path: 'index',
+        component: resolve => require(['@/views/index'], resolve),
+        name: '首页',
+        meta: { title: '首页', icon: 'dashboard', noCache: true, affix: true }
+      },
+      {
+        path: 'substation',
+        component: resolve => require(['@/views/gridnt/pomd/substation/index'], resolve),
+        name: '状态监测',
+        meta: { title: '状态监测', icon: 'dashboard', noCache: true, affix: true }
+      },
+      {
+        path: 'commStatus',
+        component: resolve => require(['@/views/gridnt/pomd/commStatus/index.vue'], resolve),
+        name: '通信状态',
+        meta: { title: '通信状态', icon: 'dashboard', noCache: true, affix: true }
+      },
+      {
+        path: 'monitor',
+        component: resolve => require(['@/views/gridnt/pomd/monitor'], resolve),
+        name: '智能运维',
+        meta: { title: '智能运维', icon: 'dashboard', noCache: true, affix: true }
+      },
+      // {
+      //   path: 'alert',
+      //   component: resolve => require(['@/views/gridnt/pomd/intelAlert'], resolve),
+      //   name: "智能告警",
+      //   meta:{ title: "智能告警", icon: 'dashboard', noCache: true, affix: true}
+      // },
+      {
+        path: 'alert',
+        component: resolve => require(['@/views/gridnt/pomd/intelAlert/index.vue'], resolve),
+        name: '运维文件',
+        meta: { title: '运维文件', icon: 'dashboard', noCache: true, affix: true }
+      },
+      {
+        path: 'constantValue',
+        component: resolve => require(['@/views/gridnt/pomd/constantValue/constantValue'], resolve),
+        name: "定值校核",
+        meta:{ title: "定值校核", icon: 'dashboard', noCache: true, affix: true}
+      }
+      // {
+      //   path:'statistics',
+      //   component: resolve => require(['@/views/gridnt/pomd/statistics'], resolve),
+      //   name: "统计分析",
+      //   meta:{ title: "统计分析", icon: 'dashboard', noCache: true, affix: true}
+      // }
+    ]
+  },
+  {
+    path: '/user',
+    component: Layout,
+    hidden: true,
+    redirect: 'noredirect',
+    children: [
+      {
+        path: 'profile',
+        component: resolve => require(['@/views/system/user/profile/index'], resolve),
+        name: 'Profile',
+        meta: { title: '个人中心', icon: 'user' }
+      }
+    ]
+  },
+  {
+    path: '/dict',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'type/data/:dictId(\\d+)',
+        component: resolve => require(['@/views/system/dict/data'], resolve),
+        name: 'Data',
+        meta: { title: '字典数据', icon: '' }
+      }
+    ]
+  },
+  {
+    path: '/job',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'log',
+        component: resolve => require(['@/views/monitor/job/log'], resolve),
+        name: 'JobLog',
+        meta: { title: '调度日志' }
+      }
+    ]
+  },
+  {
+    path: '/gen',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'edit/:tableId(\\d+)',
+        component: resolve => require(['@/views/tool/gen/editTable'], resolve),
+        name: 'GenEdit',
+        meta: { title: '修改生成配置' }
+      }
+    ]
+  }
+];
+
+export default new Router({
+  mode: 'history', // 去掉url中的#
+  scrollBehavior: () => ({ y: 0 }),
+  routes: constantRoutes
+});

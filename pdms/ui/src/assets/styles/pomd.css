@@ -1,0 +1,124 @@
+
+/**          change     20230208        **/
+.el-tabs__item{
+  color: #fff;
+  font-weight: bolder;
+  font-size: 16px;
+}
+.el-tabs__nav-wrap::after {
+  height: 0px;
+}
+
+
+::-webkit-scrollbar-track-piece {
+  background: #08173a;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1c84c6;
+  border-radius: 20px;
+}
+.el-table{
+  color: #fff;
+  background-color: transparent;
+}
+.el-table tr{
+  background-color: transparent;
+}
+.el-table .el-table__header-wrapper th, .el-table .el-table__fixed-header-wrapper th{
+  background-color: transparent;
+  color: #fff;
+}
+
+.el-table--border{
+  border-width: 0px ;
+}
+.el-table::before, .el-table--group::after, .el-table--border::after{
+  background-color: #141e4e;
+}
+.el-table--enable-row-hover .el-table__body tr:hover > td{
+  background-color: #141e4e;
+}
+
+.el-table th.is-leaf, .el-table td{
+  border-bottom: 2px solid #141e4e;
+}
+.el-table--border th, .el-table--border td{
+  border-right: 2px solid #141e4e;
+}
+
+.el-dialog{
+  border: 1px solid #239aee;
+  background-color:#0c3764
+}
+.el-dialog__title{
+  color: #fff;
+}
+.el-form-item__label{
+  color: #fff;
+}
+.el-form-item__content,.el-input,.el-input__inner{
+  background-color: #08173a;
+  color: #fff;
+}
+.el-date-range-picker__content.is-left,.el-date-range-picker__content.is-right{
+  background-color: rgb(6, 16, 41);
+}
+.el-date-range-picker__header,.el-date-table{
+  background-color: #08173a;
+  color: #fff;
+}
+.el-date-table th,
+.el-date-table td,
+.el-picker-panel__icon-btn{
+  color: #fff;
+}
+.el-date-table td.today{
+  background-color: green;
+  color: #fff;
+}
+.el-date-table td.today span{
+  color: #fff;
+}
+.el-date-table td.next-month, .el-date-table td.prev-month {
+  color: #918686;
+}
+
+.el-date-table th, .el-date-table td, .el-picker-panel__icon-btn {
+  color: #fff;
+}
+.el-date-table td.in-range div{
+  background-color: #2b4279;
+}
+.el-date-table td.in-range div:hover {
+  background-color: #2b4279;
+}
+input{
+  background-color: #08173a;
+  color: #fff;
+}
+
+.el-date-editor .el-range-input, .el-date-editor .el-range-separator, .el-date-editor .el-range__close-icon{
+  color: #fff;
+}
+.pagination-container{
+  background-color: transparent;
+}
+
+.el-pagination.is-background .btn-prev, .el-pagination.is-background .btn-next, .el-pagination.is-background .el-pager li{
+  background-color: transparent;
+}
+.el-pagination__total,.el-pagination__jump{
+  color: #fff;
+}
+.el-picker-panel *[slot=sidebar], .el-picker-panel__sidebar{
+  background-color: #08173a;
+
+}
+.el-picker-panel__shortcut{
+  color: #fff;
+}

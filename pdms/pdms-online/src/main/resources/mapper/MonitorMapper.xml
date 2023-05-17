@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gridnt.pdms.mapper.MonitorMapper">
+	<select id="getAnalogInfo" resultType="MonitorFCDA">
+		select
+			F1006_CODE as id,
+			F1006_REF as reference,
+			F1006_DESC as description,
+			F1046_DESC as deviceDesc,
+			F1011_DESC as fcdaType,
+			F1006_LOALARM as lowLimit,
+			F1006_HIALARM as highLimit
+		from
+			TB1006_ANALOGDATAVIEW analog
+		join
+			TB1046_IED ied
+		on
+			ied.F1046_CODE = analog.F1046_CODE
+		join
+			TB1011_MEASTYPE btype
+		on
+			btype.F1011_NO = analog.F1011_NO
+		where
+			(analog.F1011_NO &lt;= 900
+		or
+			analog.F1011_NO > 950)
+		and
+			analog.F1046_CODE = #{deviceID}
+	</select>
+	<select id="getConditionInfo" resultType="MonitorFCDA">
+		select
+			F1006_CODE as id,
+			F1006_REF as reference,
+			F1006_DESC as description,
+			F1046_DESC as deviceDesc,
+			F1011_DESC as fcdaType,
+			F1006_LOALARM as lowLimit,
+			F1006_HIALARM as highLimit
+		from
+			TB1006_ANALOGDATAVIEW analog
+				join
+			TB1046_IED ied
+			on
+				ied.F1046_CODE = analog.F1046_CODE
+				join
+			TB1011_MEASTYPE btype
+			on
+				btype.F1011_NO = analog.F1011_NO
+		where
+			(analog.F1011_NO > 900
+				and
+			analog.F1011_NO &lt;= 950)
+			and
+			analog.F1046_CODE = #{deviceID}
+	</select>
+	<select id="getStatusInfo" resultType="MonitorFCDA">
+		select
+			F1016_CODE as id,
+			F1016_REF as reference,
+			F1016_DESC as description,
+			F1011_DESC as fcdaType
+		from
+			TB1016_STATEDATAVIEW as state
+				join
+			TB1011_MEASTYPE btype
+			on
+				btype.F1011_NO = state.F1011_NO
+		where
+			state.F1011_NO = 200
+			and
+			state.F1046_CODE = #{deviceID}
+	</select>
+	<select id="getWarningInfo" resultType="MonitorFCDA">
+		select
+			F1016_CODE as id,
+			F1016_REF as reference,
+			F1016_DESC as description,
+			F1011_DESC as fcdaType
+		from
+			TB1016_STATEDATAVIEW as state
+				join
+			TB1011_MEASTYPE btype
+			on
+				btype.F1011_NO = state.F1011_NO
+		where
+			state.F1011_NO &lt; 200
+			and
+			state.F1046_CODE = #{deviceID}
+	</select>
+	<select id="getOtherStatusInfo" resultType="MonitorFCDA">
+		select
+			F1016_CODE as id,
+			F1016_REF as reference,
+			F1016_DESC as description,
+			F1011_DESC as fcdaType
+		from
+			TB1016_STATEDATAVIEW as state
+				join
+			TB1011_MEASTYPE btype
+			on
+				btype.F1011_NO = state.F1011_NO
+		where
+			((state.F1011_NO > 200
+			and
+			state.F1011_NO &lt; 600)
+			or
+			state.F1011_NO >= 700)
+			and
+			state.F1046_CODE = #{deviceID}
+	</select>
+	<select id="getStripeInfo" resultType="MonitorFCDA">
+		select
+			F1016_CODE as id,
+			F1016_REF as reference,
+			F1016_DESC as description,
+			F1011_DESC as fcdaType
+		from
+			TB1016_STATEDATAVIEW as state
+				join
+			TB1011_MEASTYPE btype
+			on
+				btype.F1011_NO = state.F1011_NO
+		where
+			state.F1011_NO >= 600
+			and
+			state.F1011_NO &lt; 700
+			and
+			state.F1046_CODE = #{deviceID}
+	</select>
+	<select id="getParameterInfo" resultType="SettingFCDA">
+		select
+			F1060_CODE as id,
+			F1060_REFADDR as reference,
+			F1060_DESC as description
+		from
+			TB1060_SPFCDA
+		where
+			F1046_CODE = #{deviceID}
+	</select>
+	<select id="getSettingInfo" resultType="SettingFCDA">
+		select
+			F1059_CODE as id,
+			F1059_REFADDR as reference,
+			F1059_DESC as description,
+			F1059_UNIT as unit,
+			F1059_STEPSIZE as stepSize,
+			F1059_VALUEMIN as minVal,
+			F1059_VALUEMAX as maxVal,
+			F1059_BASEVALUE as defaultVal
+		from
+			TB1059_SGFCDAVIEW
+		where
+			F1046_CODE = #{deviceID}
+	</select>
+</mapper>

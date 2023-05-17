@@ -1,0 +1,2 @@
+1、需要安装在主站机器上，因为需要主站的库支持
+2、启动命令 ./websocketServer port  ,port为websocket链接端口，需要再主站防火墙中开放此端口，并修改web 程序中的websocket连接端口

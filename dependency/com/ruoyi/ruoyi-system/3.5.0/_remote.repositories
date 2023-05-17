@@ -1,0 +1,5 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Sat Oct 23 12:07:34 CST 2021
+ruoyi-system-3.5.0.jar>=
+ruoyi-system-3.5.0-sources.jar>=
+ruoyi-system-3.5.0.pom>=

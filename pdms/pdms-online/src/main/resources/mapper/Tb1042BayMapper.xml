@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gridnt.pdms.mapper.Tb1042BayMapper">
+    <resultMap type="Tb1042Bay" id="Tb1042BayResult">
+        <result property="f1042Code"  column="F1042_CODE"    />
+        <result property="f1041Code"  column="F1041_CODE"    />
+        <result property="f1042Name"  column="F1042_NAME"    />
+        <result property="f1042Desc"  column="F1042_DESC"    />
+        <result property="f1042Voltage"  column="F1042_VOLTAGE"    />
+        <result property="f1042Conntype"  column="F1042_CONNTYPE"    />
+        <result property="f1042Devtype"  column="F1042_DEVTYPE"    />
+        <result property="f1042Iedsolution"  column="F1042_IEDSOLUTION"    />
+        <result property="f1042Keydesc"  column="F1042_KEYDESC"    />
+    </resultMap>
+    <select id="getBaysVoltageByStation" resultType="java.lang.String">
+        SELECT DISTINCT F1042_VOLTAGE FROM `TB1042_BAY` WHERE F1041_CODE = #{f1041Code} GROUP BY F1042_VOLTAGE desc
+    </select>
+</mapper>

@@ -1,0 +1,6 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Thu Jun 24 11:28:18 CST 2021
+https\://repo.maven.apache.org/maven2/.lastUpdated=1624504198039
+http\://0.0.0.0/.error=Could not transfer artifact com.gridnt\:gridnt-extends-spring-boot-starter\:pom\:1.0.0 from/to maven-default-http-blocker (http\://0.0.0.0/)\: Blocked mirror for repositories\: [gridnt_repo (http\://192.168.8.200\:8081/repository/public, default, releases+snapshots), maven-ali (http\://maven.aliyun.com/nexus/content/groups/public/, default, releases+snapshots)]
+@default-maven-default-http-blocker-http\://0.0.0.0/.lastUpdated=1624505298161
+https\://repo.maven.apache.org/maven2/.error=

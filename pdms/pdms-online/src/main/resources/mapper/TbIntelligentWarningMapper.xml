@@ -1,0 +1,847 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gridnt.pdms.mapper.TbIntelligentWarningMapper">
+    <resultMap type="TbIntelligentWarning" id="TbIntelligentWarningResult">
+        <result property="id" column="id"/>
+        <result property="substationCode" column="substation_code"/>
+        <result property="iedCode" column="ied_code"/>
+        <result property="triggerTime" column="triggertime"/>
+        <result property="alertType" column="alerttype"/>
+        <result property="source" column="source"/>
+        <result property="fileId" column="fileid"/>
+        <result property="file_status" column="file_status"/>
+    </resultMap>
+
+
+    <select id="getIntelAlert" resultType="IntelAlertEntity">
+        select
+        F1041_DESC as substationName,
+        F1041_DQDESC as operator,
+        F1046_DESC as iedName,
+        triggertime as triggerTime,
+        alerttype as alertType,
+        fileid as fileId,
+        file_status as status,
+        source
+        from
+        TB_INTELLIGENT_WARNING tiw, TB1046_IED ti, TB1041_SUBSTATION ts
+        where
+        tiw.ied_code = ti.F1046_CODE
+        and
+        tiw.substation_code = ts.F1041_CODE
+        and alerttype > 100
+        <if test="intelFilter.startTime!=null and intelFilter.startTime.trim()!=''">
+            and tiw.triggertime >= #{intelFilter.startTime}
+        </if>
+        <if test="intelFilter.endTime!=null and intelFilter.endTime.trim()!=''">
+            and tiw.triggertime &lt;= #{intelFilter.endTime}
+        </if>
+        <if test="intelFilter.alertType != 0 and intelFilter.minType == 0">
+            and tiw.alerttype = #{intelFilter.alertType}
+        </if>
+        <if test="intelFilter.alertType != 0 and intelFilter.minType != 0" >
+            and tiw.alerttype in (#{intelFilter.minType},#{intelFilter.alertType})
+        </if>
+        <if test="intelFilter.operator!=null and intelFilter.operator.trim()!=''">
+            and ts.F1041_DQDESC = #{intelFilter.operator}
+        </if>
+        <if test="intelFilter.station!=null and intelFilter.station.trim()!=''">
+            and tiw.substation_code = #{intelFilter.station}
+        </if>
+        <if test="intelFilter.device!=null and intelFilter.device.trim()!=''">
+            and tiw.ied_code = #{intelFilter.device}
+        </if>
+        order by tiw.triggertime desc
+    </select>
+    <select id="getIntelAlertStat" resultType="IntelAlertStat">
+        select
+        alerttype as alertType,
+        date_format(triggertime, '%Y-%m-%d') as triggerDate,
+        count(*) as frequency
+        from
+        TB_INTELLIGENT_WARNING tiw, TB1041_SUBSTATION ts
+        where
+        tiw.substation_code = ts.F1041_CODE
+        and tiw.alerttype > 100
+        <if test="intelFilter.startTime!=null and intelFilter.startTime.trim()!=''">
+            and tiw.triggertime >= #{intelFilter.startTime}
+        </if>
+        <if test="intelFilter.endTime!=null and intelFilter.endTime.trim()!=''">
+            and tiw.triggertime &lt;= #{intelFilter.endTime}
+        </if>
+        <if test="intelFilter.operator!=null and intelFilter.operator.trim()!=''">
+            and ts.F1041_DQDESC = #{intelFilter.operator}
+        </if>
+        <if test="intelFilter.station!=null and intelFilter.station.trim()!=''">
+            and tiw.substation_code = #{intelFilter.station}
+        </if>
+        <if test="intelFilter.device!=null and intelFilter.device.trim()!=''">
+            and tiw.ied_code = #{intelFilter.device}
+        </if>
+        group by
+        alerttype,
+        date_format(triggertime, '%Y-%m-%d')
+        order by triggerDate
+    </select>
+    <select id="getFrequentAlert" resultType="FrequentAlertEntity">
+        select
+        F1041_DESC as substationName,
+        F1041_DQDESC as operator,
+        F1046_DESC as iedName,
+        fcda_desc as detail,
+        triggertime as triggerTime,
+        acturate_count as frequency,
+        fileid as fileId
+        from
+        TB_FREQUENT_WARNING tfw, TB1041_SUBSTATION ts, TB1046_IED ti
+        where
+        tfw.substation_code = ts.F1041_CODE
+        and
+        tfw.ied_code = ti.F1046_CODE
+        <if test="intelFilter.startTime!=null and intelFilter.startTime.trim()!=''">
+            and tfw.triggertime >= #{intelFilter.startTime}
+        </if>
+        <if test="intelFilter.endTime!=null and intelFilter.endTime.trim()!=''">
+            and tfw.triggertime &lt;= #{intelFilter.endTime}
+        </if>
+        <if test="intelFilter.operator!=null and intelFilter.operator.trim()!=''">
+            and ts.F1041_DQDESC = #{intelFilter.operator}
+        </if>
+        <if test="intelFilter.station!=null and intelFilter.station.trim()!=''">
+            and tfw.substation_code = #{intelFilter.station}
+        </if>
+        <if test="intelFilter.device!=null and intelFilter.device.trim()!=''">
+            and tfw.ied_code = #{intelFilter.device}
+        </if>
+        order by tfw.triggertime desc
+    </select>
+    <select id="getFrequentStat" resultType="FrequentStat">
+        select
+        F1041_DQDESC as operator,
+        date_format(triggertime, '%Y-%m-%d') as triggerDate,
+        count(*) as frequency
+        from
+        TB_FREQUENT_WARNING tfw, TB1041_SUBSTATION ts
+        where
+        tfw.substation_code = ts.F1041_CODE
+        <if test="intelFilter.startTime!=null and intelFilter.startTime.trim()!=''">
+            and tfw.triggertime >= #{intelFilter.startTime}
+        </if>
+        <if test="intelFilter.endTime!=null and intelFilter.endTime.trim()!=''">
+            and tfw.triggertime &lt;= #{intelFilter.endTime}
+        </if>
+        <if test="intelFilter.operator!=null and intelFilter.operator.trim()!=''">
+            and ts.F1041_DQDESC = #{intelFilter.operator}
+        </if>
+        <if test="intelFilter.station!=null and intelFilter.station.trim()!=''">
+            and tfw.substation_code = #{intelFilter.station}
+        </if>
+        <if test="intelFilter.device!=null and intelFilter.device.trim()!=''">
+            and tfw.ied_code = #{intelFilter.device}
+        </if>
+        group by
+        F1041_DQDESC,
+        date_format(triggertime, '%Y-%m-%d')
+        order by triggerDate
+    </select>
+    <select id="getProtectionTunnelAlert" resultType="ProtectionTunnelAlertEntity">
+        select
+        F1041_DESC as substationName,
+        F1041_DQDESC as operator,
+        F1046_DESC as iedName,
+        end_time as triggerTime,
+        warning_level as alertLevel,
+        fileid as fileId
+        from
+        TB_PROTECTION_TUNNEL_WARNING tptw, TB1041_SUBSTATION ts, TB1046_IED ti
+        where
+        tptw.substation_code = ts.F1041_CODE
+        and
+        tptw.ied_code = ti.F1046_CODE
+        <if test="intelFilter.startTime!=null and intelFilter.startTime.trim()!=''">
+            and tptw.end_time >= #{intelFilter.startTime}
+        </if>
+        <if test="intelFilter.endTime!=null and intelFilter.endTime.trim()!=''">
+            and tptw.end_time &lt;= #{intelFilter.endTime}
+        </if>
+        <if test="intelFilter.alertLevel!=null">
+            <if test="intelFilter.alertLevel > 0">
+                and tptw.warning_level = #{intelFilter.alertLevel}
+            </if>
+            <if test="intelFilter.alertLevel == 0">
+                and tptw.warning_level &gt; 0
+            </if>
+        </if>
+        <if test="intelFilter.operator!=null and intelFilter.operator.trim()!=''">
+            and ts.F1041_DQDESC = #{intelFilter.operator}
+        </if>
+        <if test="intelFilter.station!=null and intelFilter.station.trim()!=''">
+            and tptw.substation_code = #{intelFilter.station}
+        </if>
+        <if test="intelFilter.device!=null and intelFilter.device.trim()!=''">
+            and tptw.ied_code = #{intelFilter.device}
+        </if>
+        order by tptw.end_time desc
+    </select>
+    <select id="getBlockingAlert" resultType="BlockingAlertEntity">
+        select
+        F1041_DESC as substationName,
+        F1041_DQDESC as operator,
+        ied_name as iedName,
+        triggertime as triggerTime,
+        warning_level as alertLevel,
+        fileid as fileId,
+        fcda_desc as detail
+        from
+        TB_BLOCK_SIGNAL_WARNING tbsw, TB1041_SUBSTATION ts
+        where
+        tbsw.substation_code = ts.F1041_CODE
+        <if test="intelFilter.startTime!=null and intelFilter.startTime.trim()!=''">
+            and tbsw.triggertime >= #{intelFilter.startTime}
+        </if>
+        <if test="intelFilter.endTime!=null and intelFilter.endTime.trim()!=''">
+            and tbsw.triggertime &lt;= #{intelFilter.endTime}
+        </if>
+        <if test="intelFilter.alertLevel!=null and intelFilter.alertLevel > 0">
+            and tbsw.warning_level = #{intelFilter.alertLevel}
+        </if>
+        <if test="intelFilter.operator!=null and intelFilter.operator.trim()!=''">
+            and ts.F1041_DQDESC = #{intelFilter.operator}
+        </if>
+        <if test="intelFilter.station!=null and intelFilter.station.trim()!=''">
+            and tbsw.substation_code = #{intelFilter.station}
+        </if>
+        <if test="intelFilter.device!=null and intelFilter.device.trim()!=''">
+            and tbsw.ied_code = #{intelFilter.device}
+        </if>
+        order by tbsw.triggertime desc
+    </select>
+    <select id="getBlockingStat" resultType="BlockingStat">
+        select
+        warning_level as level,
+        date_format(triggertime, '%Y-%m-%d') as triggerDate,
+        count(*) as frequency
+        from
+        TB_BLOCK_SIGNAL_WARNING tbsw, TB1041_SUBSTATION ts
+        where
+        tbsw.substation_code = ts.F1041_CODE
+        <if test="intelFilter.startTime!=null and intelFilter.startTime.trim()!=''">
+            and tbsw.triggertime >= #{intelFilter.startTime}
+        </if>
+        <if test="intelFilter.endTime!=null and intelFilter.endTime.trim()!=''">
+            and tbsw.triggertime &lt;= #{intelFilter.endTime}
+        </if>
+        <if test="intelFilter.alertLevel!=null and intelFilter.alertLevel > 0">
+            and tbsw.warning_level = #{intelFilter.alertLevel}
+        </if>
+        <if test="intelFilter.operator!=null and intelFilter.operator.trim()!=''">
+            and ts.F1041_DQDESC = #{intelFilter.operator}
+        </if>
+        <if test="intelFilter.station!=null and intelFilter.station.trim()!=''">
+            and tbsw.substation_code = #{intelFilter.station}
+        </if>
+        <if test="intelFilter.device!=null and intelFilter.device.trim()!=''">
+            and tbsw.ied_code = #{intelFilter.device}
+        </if>
+        group by
+        warning_level, triggerDate
+    </select>
+    <select id="getFileContext" resultType="FileContextEntity">
+        select
+            context,
+            base_filename as filename
+        from
+            TB_FILE_CONTEXT tfc
+        where
+            tfc.id = #{key}
+    </select>
+
+
+    <select id="getOutRimAlert" resultType="OutRimAlertEntity">
+        select
+        F1041_DESC as substationName,
+        F1041_DQDESC as operator,
+        F1046_DESC as iedName,
+        triggertime as triggerTime,
+        alerttype as alertType,
+        fileid as fileId,
+        file_status as status,
+        source
+        from
+        TB_INTELLIGENT_WARNING tiw, TB1046_IED ti, TB1041_SUBSTATION ts
+        where
+        tiw.ied_code = ti.F1046_CODE
+        and
+        tiw.substation_code = ts.F1041_CODE
+        and
+        alertType=4
+        <if test="intelFilter.startTime!=null and intelFilter.startTime.trim()!=''">
+            and tiw.triggertime >= #{intelFilter.startTime}
+        </if>
+        <if test="intelFilter.endTime!=null and intelFilter.endTime.trim()!=''">
+            and tiw.triggertime &lt;= #{intelFilter.endTime}
+        </if>
+        <if test="intelFilter.minType!=null and intelFilter.maxType!=null">
+            and tiw.alerttype between #{intelFilter.minType} and #{intelFilter.maxType}
+        </if>
+        <if test="intelFilter.operator!=null and intelFilter.operator.trim()!=''">
+            and ts.F1041_DQDESC = #{intelFilter.operator}
+        </if>
+        <if test="intelFilter.station!=null and intelFilter.station.trim()!=''">
+            and tiw.substation_code = #{intelFilter.station}
+        </if>
+        <if test="intelFilter.device!=null and intelFilter.device.trim()!=''">
+            and tiw.ied_code = #{intelFilter.device}
+        </if>
+        order by tiw.triggertime desc
+    </select>
+
+    <select id="getTransformerCurrentAlert" resultType="TransformerCurrentEntity">
+        select
+        F1041_DESC as substationName,
+        F1041_DQDESC as operator,
+        F1046_DESC as iedName,
+        triggertime as triggerTime,
+        alerttype as alertType,
+        fileid as fileId,
+        file_status as status,
+        source
+        from
+        TB_INTELLIGENT_WARNING tiw, TB1046_IED ti, TB1041_SUBSTATION ts
+        where
+        tiw.ied_code = ti.F1046_CODE
+        and
+        tiw.substation_code = ts.F1041_CODE
+        and
+        alertType=5
+        <if test="intelFilter.startTime!=null and intelFilter.startTime.trim()!=''">
+            and tiw.triggertime >= #{intelFilter.startTime}
+        </if>
+        <if test="intelFilter.endTime!=null and intelFilter.endTime.trim()!=''">
+            and tiw.triggertime &lt;= #{intelFilter.endTime}
+        </if>
+        <if test="intelFilter.minType!=null and intelFilter.maxType!=null">
+            and tiw.alerttype between #{intelFilter.minType} and #{intelFilter.maxType}
+        </if>
+        <if test="intelFilter.operator!=null and intelFilter.operator.trim()!=''">
+            and ts.F1041_DQDESC = #{intelFilter.operator}
+        </if>
+        <if test="intelFilter.station!=null and intelFilter.station.trim()!=''">
+            and tiw.substation_code = #{intelFilter.station}
+        </if>
+        <if test="intelFilter.device!=null and intelFilter.device.trim()!=''">
+            and tiw.ied_code = #{intelFilter.device}
+        </if>
+        order by tiw.triggertime desc
+    </select>
+
+    <select id="getAllArea" resultType="com.gridnt.pdms.domain.CommSta_Area">
+        select  distinct F1041_DQDESC as areaName from  TB1041_SUBSTATION
+    </select>
+    <select id="getAllSubs" resultType="com.gridnt.pdms.domain.CommSta_Subs">
+        select
+         F1041_CODE as substationCode,
+         F1041_DQDESC as areaName,
+         F1041_DESC as subName
+         from
+         TB1041_SUBSTATION
+    </select>
+    <select id="getAllBay" resultType="com.gridnt.pdms.domain.CommSta_Bay">
+        select
+         F1041_CODE as substationCode,
+         F1042_CODE as bayCode,
+         F1042_NAME as bayName,
+         F1042_DESC as bayDesc
+        from
+        TB1042_BAY
+    </select>
+    <select id="getAllIED" resultType="com.gridnt.pdms.domain.CommSta_IED">
+        select
+         F1046_CODE as iedCode,
+         F1042_CODE as bayCode,
+         F1046_NAME as iedName,
+         F1046_DESC as iedDesc
+        from
+        TB1046_IED
+    </select>
+
+
+    <select id="getAllHisEvent" resultType="com.gridnt.pdms.domain.CommStat_hisVo">
+        select
+        distinct h.CODE as hcode,
+        sub.F1041_DESC as subName,
+        o.DSCB as objectName,
+        h.SUBSTATION as substation,
+        h.BAY as bay,
+        h.YMD as ymd,
+        h.HMSMS as hmsms,
+        h.STATE as state,
+        h.OBJECT as object,
+        h.TEXT as text
+        from
+        TB_HIS_EVENT h, TB_OBJECT_DESC o,TB1041_SUBSTATION sub
+        where
+        h.BASETYPE=202
+        and object = substation
+        and object = o.CODE
+        and substation = sub.F1041_CODE
+        <if test="date != null">
+            <if test="dateType != null">
+                <if test="dateType == 'week'">
+                    and
+                    YEARWEEK(DATE_FORMAT(h.YMD,'%Y-%m-%d')) = YEARWEEK(#{date})
+                </if>
+
+                <if test="dateType == 'month'">
+                    and
+                    MONTH(h.YMD) = (MONTH(#{date}))
+                    and
+                    YEAR(h.YMD) = YEAR(#{date})
+                </if>
+                <if test="dateType == 'year'">
+                    and
+                    YEAR(h.YMD) =(YEAR(#{date}))
+                </if>
+            </if>
+        </if>
+        order by
+        h.YMD desc ,h.HMSMS desc
+    </select>
+    <select id="getAllCommStatus" resultType="com.gridnt.pdms.domain.Commsta_CommStatusVo">
+        select
+        o.DSCB as objectName,
+        c.objectCode as objectCode,
+        c.stationCode as stationCode,
+        c.bayCode as bayCode,
+        sum(c.connectionTime) as connectionTime,
+        sum(c.disConnectionTime) as disConnectionTime
+        from
+        TB_CommStatusStatistics c,TB_OBJECT_DESC o
+        where
+        objectCode = stationCode
+        and
+        stationCOde = o.CODE
+        <if test="date != null">
+            <if test="dateType != null">
+                <if test="dateType == 'week'">
+                    and YEARWEEK(DATE_FORMAT(c.commDate,'%Y-%m-%d')) = YEARWEEK(#{date})
+                </if>
+                <if test="dateType == 'month'">
+                    and MONTH(c.commDate) = (MONTH(#{date}))
+                    and
+                    YEAR(c.commDate) =YEAR(#{date})
+                </if>
+                <if test="dateType == 'year'">
+                    and YEAR(c.commDate) = (YEAR(#{date}))
+                </if>
+            </if>
+        </if>
+        group by
+        objectCode,
+        stationCode,
+        bayCode,
+        objectName
+    </select>
+
+
+    <select id="getAreaHisEvent" resultType="com.gridnt.pdms.domain.CommStat_hisVo">
+        select
+        distinct h.CODE as hcode,
+        sub.F1041_DESC as subName,
+        sub.F1041_DQDESC as area,
+        o.DSCB as objectName,
+        h.SUBSTATION as substation,
+        h.BAY as bay,
+        h.YMD as ymd,
+        h.HMSMS as hmsms,
+        h.STATE as state,
+        h.OBJECT as object,
+        h.TEXT as text
+        from
+        TB_HIS_EVENT h, TB_OBJECT_DESC o,TB1041_SUBSTATION sub
+        where
+        h.BASETYPE=202
+        and object = substation
+        and object = o.CODE
+        and substation = sub.F1041_CODE
+        and sub.F1041_DQDESC = #{hiscode}
+        <!--   让变电站的code等于hisEvent的code，并且变电站的area等于传过来的area-->
+        <!--  因为elementui月选择器：当选择12月时，提交的数据是11月30号，所以month要+1-->
+        <if test="date != null">
+            <if test="dateType != null">
+                <if test="dateType == 'week'">
+                    and
+                    YEARWEEK(DATE_FORMAT(h.YMD,'%Y-%m-%d')) = YEARWEEK(#{date})
+                </if>
+
+                <if test="dateType == 'month'">
+                    and
+                    MONTH(h.YMD) = (MONTH(#{date}))
+                    and
+                    YEAR(h.YMD) = YEAR(#{date})
+                </if>
+                <if test="dateType == 'year'">
+                    and
+                    YEAR(h.YMD) =(YEAR(#{date}))
+                </if>
+            </if>
+        </if>
+        order by
+        h.YMD desc ,h.HMSMS desc
+    </select>
+    <select id="getAreaCommStatus" resultType="com.gridnt.pdms.domain.Commsta_CommStatusVo">
+        select
+        o.DSCB as objectName,
+        c.objectCode as objectCode,
+        c.stationCode as stationCode,
+        c.bayCode as bayCode,
+        sum(c.connectionTime) as connectionTime,
+        sum(c.disConnectionTime) as disConnectionTime
+        from
+        TB_CommStatusStatistics c,TB_OBJECT_DESC o,TB1041_SUBSTATION sub
+        where
+        objectCode = stationCode
+        and stationCode = o.CODE
+        and stationCode = sub.F1041_Code
+        and sub.F1041_DQDESC=#{hiscode}
+        <if test="date != null">
+            <if test="dateType != null">
+                <if test="dateType == 'week'">
+                    and YEARWEEK(DATE_FORMAT(c.commDate,'%Y-%m-%d')) = YEARWEEK(#{date})
+                </if>
+                <if test="dateType == 'month'">
+                    and MONTH(c.commDate) = (MONTH(#{date}))
+                    and
+                    YEAR(c.commDate) =YEAR(#{date})
+                </if>
+                <if test="dateType == 'year'">
+                    and YEAR(c.commDate) = (YEAR(#{date}))
+                </if>
+            </if>
+        </if>
+        group by o.DSCB,
+        objectCode,
+        stationCode,
+        bayCode,
+        objectName
+    </select>
+
+
+    <select id="getSubHisEvent" resultType="com.gridnt.pdms.domain.CommStat_hisVo">
+        select
+        h.CODE as hcode,
+        sub.F1041_DESC as subName,
+        sub.F1041_DQDESC as area,
+        o.DSCB as objectName,
+        h.SUBSTATION as substation,
+        h.BAY as bay,
+        h.YMD as ymd,
+        h.HMSMS as hmsms,
+        h.STATE as state,
+        h.OBJECT as object,
+        h.TEXT as text
+        from
+            TB_HIS_EVENT h, TB_OBJECT_DESC o, TB1041_SUBSTATION sub
+        where
+        h.BASETYPE=202
+        and object = o.CODE
+        and substation = #{hiscode}
+        and subStation = sub.F1041_CODE
+        <!-- 站只能看站里面的设备 -->
+        and object !=substation
+        <if test="date != null">
+            <if test="dateType != null">
+                <if test="dateType == 'week'">
+                    and
+                    YEARWEEK(DATE_FORMAT(h.YMD,'%Y-%m-%d')) = YEARWEEK(#{date})
+                </if>
+                <if test="dateType == 'month'">
+                    and
+                    MONTH(h.YMD) = (MONTH(#{date}))
+                    and
+                    YEAR(h.YMD) = YEAR(#{date})
+                </if>
+                <if test="dateType == 'year'">
+                    and
+                    YEAR(h.YMD) =(YEAR(#{date}))
+                </if>
+            </if>
+        </if>
+        order by
+        h.YMD desc ,h.HMSMS desc
+    </select>
+    <!-- 站只能看站里面的设备-->
+    <select id="getSubCommStatus" resultType="com.gridnt.pdms.domain.Commsta_CommStatusVo">
+        select
+        o.DSCB as objectName,
+        c.objectCode as objectCode,
+        c.stationCode as stationCode,
+        c.bayCode as bayCode,
+        sum(c.connectionTime) as connectionTime,
+        sum(c.disConnectionTime) as disConnectionTime
+        from
+        TB_CommStatusStatistics c,TB_OBJECT_DESC o
+        where
+        objectCode != stationCode
+        and objectCode = o.CODE
+        and stationCode = #{hiscode}
+        <if test="date != null">
+            <if test="dateType != null">
+                <if test="dateType == 'week'">
+                    and YEARWEEK(DATE_FORMAT(c.commDate,'%Y-%m-%d')) = YEARWEEK(#{date})
+                </if>
+                <if test="dateType == 'month'">
+                    and MONTH(c.commDate) = (MONTH(#{date}))
+                    and
+                    YEAR(c.commDate) =YEAR(#{date})
+                </if>
+                <if test="dateType == 'year'">
+                    and YEAR(c.commDate) = (YEAR(#{date}))
+                </if>
+            </if>
+        </if>
+        group by
+        objectCode,
+        stationCode,
+        bayCode,
+        objectName
+    </select>
+
+
+    <select id="getBayHisEvent" resultType="com.gridnt.pdms.domain.CommStat_hisVo">
+        select
+        distinct h.CODE as hcode,
+        sub.F1041_DESC as subName,
+        sub.F1041_DQDESC as area,
+        o.DSCB as objectName,
+        h.SUBSTATION as substation,
+        h.BAY as bay,
+        h.YMD as ymd,
+        h.HMSMS as hmsms,
+        h.STATE as state,
+        h.OBJECT as object,
+        h.TEXT as text
+        from
+        TB_HIS_EVENT h, TB_OBJECT_DESC o, TB1041_SUBSTATION sub
+        where
+        h.BASETYPE=202
+        and bay = #{hiscode}
+        and o.CODE = object
+        and substation = sub.F1041_CODE
+        <!--   让变电站的code等于hisEvent的code，并且变电站的area等于传过来的area-->
+        <!--  因为elementui月选择器：当选择12月时，提交的数据是11月30号，所以month要+1-->
+        <if test="date != null">
+            <if test="dateType != null">
+                <if test="dateType == 'week'">
+                    and
+                    YEARWEEK(DATE_FORMAT(h.YMD,'%Y-%m-%d')) = YEARWEEK(#{date})
+                </if>
+
+                <if test="dateType == 'month'">
+                    and
+                    MONTH(h.YMD) = (MONTH(#{date}))
+                    and
+                    YEAR(h.YMD) = YEAR(#{date})
+                </if>
+                <if test="dateType == 'year'">
+                    and
+                    YEAR(h.YMD) =(YEAR(#{date}))
+                </if>
+            </if>
+        </if>
+        order by
+        h.YMD desc ,h.HMSMS desc
+    </select>
+    <select id="getBayCommStatus" resultType="com.gridnt.pdms.domain.Commsta_CommStatusVo">
+        select
+        o.DSCB as objectName,
+        c.objectCode as objectCode,
+        c.stationCode as stationCode,
+        c.bayCode as bayCode,
+        sum(c.connectionTime) as connectionTime,
+        sum(c.disConnectionTime) as disConnectionTime
+        from
+        TB_CommStatusStatistics c,TB_OBJECT_DESC o
+        where
+        bayCode = #{hiscode}
+        and o.CODE = objectCode
+        <if test="date != null">
+            <if test="dateType != null">
+                <if test="dateType == 'week'">
+                    and YEARWEEK(DATE_FORMAT(c.commDate,'%Y-%m-%d')) = YEARWEEK(#{date})
+                </if>
+                <if test="dateType == 'month'">
+                    and MONTH(c.commDate) = (MONTH(#{date}))
+                    and
+                    YEAR(c.commDate) =YEAR(#{date})
+                </if>
+                <if test="dateType == 'year'">
+                    and YEAR(c.commDate) = (YEAR(#{date}))
+                </if>
+            </if>
+        </if>
+        group by
+        objectCode,
+        stationCode,
+        bayCode,
+        objectName
+    </select>
+
+
+    <select id="getIedHisEvent" resultType="com.gridnt.pdms.domain.CommStat_hisVo">
+        select
+        distinct h.CODE as hcode,
+        sub.F1041_DESC as subName,
+        sub.F1041_DQDESC as area,
+        o.DSCB as objectName,
+        h.SUBSTATION as substation,
+        h.BAY as bay,
+        h.YMD as ymd,
+        h.HMSMS as hmsms,
+        h.STATE as state,
+        h.OBJECT as object,
+        h.TEXT as text
+        from
+        TB_HIS_EVENT h, TB_OBJECT_DESC o, TB1041_SUBSTATION sub
+        where
+        h.BASETYPE=202
+        and object = #{hiscode}
+        and o.IED = #{hiscode}
+        and o.code = object
+        and substation = sub.F1041_CODE
+        <!--   让变电站的code等于hisEvent的code，并且变电站的area等于传过来的area-->
+        <!--  因为elementui月选择器：当选择12月时，提交的数据是11月30号，所以month要+1-->
+        <if test="date != null">
+            <if test="dateType != null">
+                <if test="dateType == 'week'">
+                    and
+                    YEARWEEK(DATE_FORMAT(h.YMD,'%Y-%m-%d')) = YEARWEEK(#{date})
+                </if>
+
+                <if test="dateType == 'month'">
+                    and
+                    MONTH(h.YMD) = (MONTH(#{date}))
+                    and
+                    YEAR(h.YMD) = YEAR(#{date})
+                </if>
+                <if test="dateType == 'year'">
+                    and
+                    YEAR(h.YMD) =(YEAR(#{date}))
+                </if>
+            </if>
+        </if>
+        order by
+        h.YMD desc ,h.HMSMS desc
+    </select>
+    <select id="getIedCommStatus" resultType="com.gridnt.pdms.domain.Commsta_CommStatusVo">
+        select
+        o.DSCB as objectName,
+        c.objectCode as objectCode,
+        c.stationCode as stationCode,
+        c.bayCode as bayCode,
+        sum(c.connectionTime) as connectionTime,
+        sum(c.disConnectionTime) as disConnectionTime
+        from
+        TB_CommStatusStatistics c,TB_OBJECT_DESC o
+        where
+        objectCode = #{hiscode}
+        and o.CODE = objectCode
+        <if test="date != null">
+            <if test="dateType != null">
+                <if test="dateType == 'week'">
+                    and YEARWEEK(DATE_FORMAT(c.commDate,'%Y-%m-%d')) = YEARWEEK(#{date})
+                </if>
+                <if test="dateType == 'month'">
+                    and MONTH(c.commDate) = (MONTH(#{date}))
+                    and
+                    YEAR(c.commDate) =YEAR(#{date})
+                </if>
+                <if test="dateType == 'year'">
+                    and YEAR(c.commDate) = (YEAR(#{date}))
+                </if>
+            </if>
+        </if>
+        group by
+        objectCode,
+        stationCode,
+        bayCode,
+        objectName
+    </select>
+
+    <select id="getIntelAlertLevel" resultType="IntelAlertLevel">
+        select
+        warning_level as alertLevel,
+        date_format(end_time, '%Y-%m-%d') as triggerDate,
+        count(*) as frequency
+        from
+        TB_PROTECTION_TUNNEL_WARNING tptw, TB1041_SUBSTATION ts
+        where
+        tptw.substation_code = ts.F1041_CODE
+        <if test="intelFilter.startTime!=null and intelFilter.startTime.trim()!=''">
+            and tptw.start_time >= #{intelFilter.startTime}
+        </if>
+        <if test="intelFilter.endTime!=null and intelFilter.endTime.trim()!=''">
+            and tptw.end_time &lt;= #{intelFilter.endTime}
+        </if>
+        <if test="intelFilter.operator!=null and intelFilter.operator.trim()!=''">
+            and ts.F1041_DQDESC = #{intelFilter.operator}
+        </if>
+        <if test="intelFilter.station!=null and intelFilter.station.trim()!=''">
+            and tptw.substation_code = #{intelFilter.station}
+        </if>
+        <if test="intelFilter.device!=null and intelFilter.device.trim()!=''">
+            and tptw.ied_code = #{intelFilter.device}
+        </if>
+        group by
+        alertLevel,
+        triggerDate
+        order by triggerDate
+    </select>
+    <select id="getJudgeReportStatistics" resultType="com.gridnt.pdms.domain.DashboardReportVo">
+        SELECT
+            a.F1041_DESC,
+            b.substation_code,
+            sum(if(alerttype = 101,1,0)) a_count,
+            sum(if(alerttype = 102,1,0)) b_count,
+            sum(if(alerttype = 103,1,0)) c_count ,
+            sum(if(alerttype = 104,1,0)) d_count ,
+            sum(if(alerttype = 105,1,0)) e_count ,
+            sum(if(alerttype = 106,1,0)) f_count
+        FROM
+            `TB1041_SUBSTATION` a
+                JOIN `TB_INTELLIGENT_WARNING` b ON a.F1041_CODE = b.substation_code
+        GROUP BY
+            b.substation_code
+    </select>
+    <select id="getLatestVisitReportNumber" resultType="java.lang.Integer">
+        SELECT
+            count( 1 ) AS count
+        FROM
+            `TB_INTELLIGENT_WARNING`
+        WHERE
+            date( triggertime ) = ( SELECT date( triggertime ) FROM `TB_INTELLIGENT_WARNING` WHERE alerttype = 6 ORDER BY triggertime DESC LIMIT 1 ) and alerttype = 6
+    </select>
+    <select id="getSubstationNumber" resultType="java.lang.Integer">
+        SELECT
+            count(1) AS count
+        FROM `TB1041_SUBSTATION`
+    </select>
+    <select id="getNotVisitStationList" resultType="com.gridnt.pdms.domain.Tb1041Substation">
+        SELECT
+            *
+        FROM
+            `TB1041_SUBSTATION`
+        WHERE
+                F1041_CODE NOT IN (
+                (
+                    SELECT
+                        substation_code
+                    FROM
+                        `TB_INTELLIGENT_WARNING`
+                    WHERE
+            date( triggertime ) = ( SELECT date( triggertime ) FROM `TB_INTELLIGENT_WARNING` WHERE alerttype = 6 ORDER BY triggertime DESC LIMIT 1 )
+          AND alerttype = 6
+            )
+            )
+    </select>
+</mapper>

@@ -1,0 +1,42 @@
+version: '3'
+services:
+  pomdmysqldb:
+    image: 192.168.8.200:5000/mariadb:10.5.8
+    container_name: pomdmysqldb
+    privileged: true
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1G"
+    environment:
+      - MYSQL_ROOT_PASSWORD=Root_123456
+      - TZ=Asia/Shanghai
+    volumes:
+      - /home/gridnt/heze/mysql:/var/lib/mysql
+      - /home/gridnt/heze/mysql_dbinit/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - /home/gridnt/heze/mysql_dbinit:/opt/sql
+      - /home/gridnt/heze/mysql_dbinit/my.cnf:/etc/mysql/my.cnf
+    ports:
+      - 3306:3306
+    networks:
+      - custom_net
+    restart: always
+  pomdredis:
+    image: 192.168.8.200:5000/redis:1.0
+    container_name: pomdredis
+    privileged: true
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1G"
+    environment:
+      - TZ=Asia/Shanghai
+    ports:
+      - 6379:6379
+    networks:
+      - custom_net
+    restart: always
+networks:
+  custom_net:
+    external:
+      name: pomd-web

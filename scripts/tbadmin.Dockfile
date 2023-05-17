@@ -1,0 +1,29 @@
+#FROM docker.io/adoptopenjdk/openjdk11:armv7l-ubuntu-jre11u-nightly
+FROM 192.168.8.205:8082/gridnt/openjdk11:x86_64-debianslim-jre-11.0.13_8
+
+COPY   admin  /usr/local/admin/
+
+RUN chmod 777 /usr/local/admin/*  && \
+    echo 'Asia/Shanghai' >/etc/timezone
+
+
+
+#################连接mysql
+ENV  JDBC_URL=db.host:3306
+ENV  JDBC_USER=root
+ENV  JDBC_PASSWORD=Root_123456
+
+##################连接redis
+ENV REDIS_HOST=redis.host
+
+#解决jdk11启动界面报错
+ENV JAVA_OPTS="-server  -Dfile.encoding=UTF-8 -Xms2048m -Xmx2048m -Xss512k -Djava.awt.headless=true"
+
+###################设置默认字符集
+ENV LANG=zh_CN.UTF-8
+
+EXPOSE 28080
+#ENTRYPOINT  ["java","-jar","/usr/local/admin/ruoyi-admin.jar"]
+##研发版本使用下面命令提示没有权限,是因为容器内目录下有相同的jar，可修改映射到目标机的目录解决
+ENTRYPOINT  ["/usr/local/admin/start_adminjar.sh"]
+

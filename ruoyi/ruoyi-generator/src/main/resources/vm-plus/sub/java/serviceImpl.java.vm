@@ -1,0 +1,125 @@
+package ${packageName}.service.impl;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.utils.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import ${packageName}.mapper.${ClassName}Mapper;
+import ${packageName}.mapper.${subClassName}Mapper;
+import ${packageName}.domain.${ClassName};
+import ${packageName}.domain.${subClassName};
+import ${packageName}.service.I${ClassName}Service;
+import java.util.HashMap;
+import java.util.List;
+/**
+ * ${functionName}Service业务层处理
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Service
+public class ${ClassName}ServiceImpl extends ServiceImpl<${ClassName}Mapper, ${ClassName}> implements I${ClassName}Service {
+
+    @Autowired
+    private ${subClassName}Mapper ${subclassName}Mapper;
+
+    /**
+     * 查询${functionName}
+     * @param ${pkColumn.javaField} ${functionName}ID
+     * @return ${functionName}
+     */
+    @Override
+    public ${ClassName} getById(${pkColumn.javaType} ${pkColumn.javaField})
+    {
+        ${ClassName} ${className} = baseMapper.selectById(${pkColumn.javaField});
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("${subTableFkName}",${pkColumn.javaField});
+        List<${subClassName}> ${subclassName}s = ${subclassName}Mapper.selectByMap(map);
+        ${className}.set${subClassName}List(${subclassName}s);
+        return ${className};
+    }
+
+    /**
+     * 新增${functionName}
+     *
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    @Transactional
+    @Override
+    public boolean save(${ClassName} ${className})
+    {
+        int rows = baseMapper.insert(${className});
+        insert${subClassName}(${className});
+        return rows > 0;
+    }
+
+    /**
+     * 修改${functionName}
+     *
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    @Transactional
+    @Override
+    public boolean updateById(${ClassName} ${className})
+    {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("${subTableFkName}",${className}.get${pkColumn.capJavaField}());
+        ${subclassName}Mapper.deleteByMap(map);
+        insert${subClassName}(${className});
+        int rows = baseMapper.updateById(${className});
+        return rows > 0;
+    }
+
+    /**
+     * 批量删除${functionName}
+     *
+     * @param ${pkColumn.javaField}s 需要删除的${functionName}ID
+     * @return 结果
+     */
+    @Transactional
+    @Override
+    public boolean removeByIds(List<${pkColumn.javaType}> ${pkColumn.javaField}s)
+    {
+        for (${pkColumn.javaType} ${pkColumn.javaField} : ${pkColumn.javaField}s) {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("${subTableFkName}",${pkColumn.javaField});
+            ${subclassName}Mapper.deleteByMap(map);
+        }
+
+        int rows = baseMapper.deleteBatchIds(${pkColumn.javaField}s);
+        return rows > 0;
+    }
+
+    /**
+     * 新增${subTable.functionName}信息
+     *
+     * @param ${className} ${functionName}对象
+     */
+    public void insert${subClassName}(${ClassName} ${className})
+    {
+        List<${subClassName}> ${subclassName}List = ${className}.get${subClassName}List();
+        ${pkColumn.javaType} ${pkColumn.javaField} = ${className}.get${pkColumn.capJavaField}();
+        if (${subclassName}List) != null && !${subclassName}List).isEmpty())
+        {
+            for (${subClassName} ${subclassName} : ${subclassName}List)
+            {
+              ${subclassName}.set${subTableFkClassName}(${pkColumn.javaField});
+              ${subclassName}Mapper.insert(${subclassName});
+            }
+        }
+    }
+
+    /**
+     * 删除${subTable.functionName}信息
+     *
+     * @param ${subclassName}Ids
+     */
+    @Override
+    public boolean remove${subClassName}ByIds(List<${pkColumn.javaType}> ${subclassName}Ids){
+        int rows = ${subclassName}Mapper.deleteBatchIds(${subclassName}Ids);
+        return rows > 0;
+    }
+}

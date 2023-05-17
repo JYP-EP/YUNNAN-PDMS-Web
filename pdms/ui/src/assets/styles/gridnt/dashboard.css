@@ -1,0 +1,128 @@
+.app-wrapper {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.left-div {
+  height: 96%;
+  display: flex;
+  padding:20px 0px 0px 20px;
+  flex-direction: column;
+}
+
+.right-div {
+  height: 96%;
+  display: flex;
+  padding:20px 20px 0px 0px;
+  flex-direction: column;
+}
+
+.left-div > div,
+.right-div > div {
+  margin: 5px 5px;
+  flex: 1;
+  background-image: url('../../images/gridnt/dashboard/bk1.png');
+  -moz-background-image: url('../../images/gridnt/dashboard/bk1.png');
+  background-size: 100% 100%;
+  -moz-background-size: 100% 100%;
+  position: relative;
+  padding: 4% 5% 5% 5%;
+}
+
+.center-div {
+  padding: 0% 0% 1% 0%;
+}
+
+.center-div > div:first-child {
+  height: 62%;
+  margin-bottom: 1%;
+  position: relative;
+}
+
+.center-div > div:last-child {
+  height: 36%;
+  position: relative;
+  padding: 3% 2% 3% 2%;
+  background-image: url('../../images/gridnt/dashboard/bk2.png');
+  -moz-background-image: url('../../images/gridnt/dashboard/bk2.png');
+  background-size: 100% 100%;
+  -moz-background-size: 100% 100%;
+}
+
+.center-div > div:last-child .module-title {
+  height: 13%;
+  width: 27%;
+  padding-left: 1%;
+}
+
+.center-div .div-corner {
+  width: 10%;
+  height: 23%;
+}
+
+.map-title {
+  position: absolute;
+  top: 15%;
+  left: 7%;
+  z-index: 99;
+  /*color: #fff;*/
+}
+
+.map-title span {
+  line-height: 20px;
+  margin-left: 10px;
+}
+
+.position-img {
+  width: 40px;
+  height: 40px;
+  vertical-align: bottom;
+}
+
+.main-container {
+  height: calc(100% - 90px);
+}
+
+.running-time-div {
+  height: 50px;
+  /*border: 1px solid rgb(255, 255, 255);*/
+  text-align: center;
+  color: #fff;
+  line-height: 50px;
+  font-size: 23px;
+  letter-spacing: 4px;
+}
+
+.count-img {
+  height: 80%;
+  text-align: center;
+  padding-top: 2%;
+}
+
+.count-img img {
+  height: 100%;
+  margin: 0 auto;
+  display: block;
+}
+
+.count-img div {
+  position: relative;
+  top: -60%;
+  display: block;
+  text-align: center;
+  width: 100%;
+  font-size: 25px;
+  letter-spacing: 2px;
+  color: #21b1f0;
+  font-weight: bold;
+}
+
+.count-sub-title {
+  text-align: center;
+  color: rgb(255, 255, 255);
+  font-size: 19px;
+  margin-top: 2%;
+  letter-spacing: 2px;
+}

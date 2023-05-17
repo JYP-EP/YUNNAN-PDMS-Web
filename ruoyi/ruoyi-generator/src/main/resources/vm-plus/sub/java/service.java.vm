@@ -1,0 +1,52 @@
+package ${packageName}.service;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import ${packageName}.domain.${ClassName};
+import java.util.List;
+
+/**
+ * ${functionName}Service接口
+ * 
+ * @author ${author}
+ * @date ${datetime}
+ */
+public interface I${ClassName}Service extends IService<${ClassName}> {
+    /**
+     * 查询${functionName}
+     * @param ${pkColumn.javaField} ${functionName}ID
+     * @return ${functionName}
+     */
+    ${ClassName} getById(${pkColumn.javaType} ${pkColumn.javaField});
+
+    /**
+     * 新增${functionName}
+     *
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    boolean save(${ClassName} ${className});
+
+    /**
+     * 修改${functionName}
+     *
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    boolean updateById(${ClassName} ${className});
+
+    /**
+     * 批量删除${functionName}
+     *
+     * @param ${pkColumn.javaField}s 需要删除的${functionName}ID
+     * @return 结果
+     */
+    boolean removeByIds(List<${pkColumn.javaType}> ${pkColumn.javaField}s);
+
+    /**
+     * 删除${subTable.functionName}信息
+     *
+     * @param ${subclassName}Ids
+     */
+    boolean remove${subClassName}ByIds(List<${pkColumn.javaType}> ${subclassName}Ids)；
+
+}

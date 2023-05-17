@@ -1,0 +1,5 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Sat Oct 23 12:07:36 CST 2021
+ruoyi-generator-3.5.0-sources.jar>=
+ruoyi-generator-3.5.0.jar>=
+ruoyi-generator-3.5.0.pom>=

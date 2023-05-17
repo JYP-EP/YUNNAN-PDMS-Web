@@ -1,0 +1,4 @@
+FROM  192.168.8.205:8082/gridnt/nginx:1.21.4
+COPY  www  /data/nginx/www 
+COPY  nginx.conf /etc/nginx/nginx.conf
+

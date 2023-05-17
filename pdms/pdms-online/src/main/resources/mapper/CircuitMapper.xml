@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gridnt.pdms.mapper.CircuitMapper">
+    <select id="loadCBList"  resultType="java.util.Map" parameterType="java.lang.String">
+        select distinct a.* from TB1065_LOGICALLINKVIEW a,TB1063_CIRCUIT b where a.F1065_CODE = b.F1065_CODE and
+        (a.F1046_CODE_IEDRECV = #{f1046Code,jdbcType=VARCHAR}
+        OR a.F1046_CODE_IEDSEND = #{f1046Code,jdbcType=VARCHAR})  order by F1065_APPID asc
+
+
+    </select>
+
+    <select id="loadNoPlateCir" parameterType="java.lang.String" resultType="com.gridnt.pdms.domain.Tb1063Circuitview">
+        select * from TB1063_CIRCUITVIEW where F1065_CODE = #{tb1065Code,jdbcType=VARCHAR}
+        and (F1016_CODE_STRAPRECV = '' or F1016_CODE_STRAPRECV is null) and
+        (F1016_CODE_STRAPSEND = '' or F1016_CODE_STRAPSEND is null)
+    </select>
+
+    <select id="loadPlates" resultType="java.lang.String">
+        SELECT DISTINCT ${columnName} from TB1063_CIRCUITVIEW where F1065_CODE=#{tb1065Code,jdbcType=VARCHAR}
+
+    </select>
+
+    <select id="loadCircuitByPlate" resultType="com.gridnt.pdms.domain.Tb1063Circuitview">
+        select * from TB1063_CIRCUITVIEW where F1065_CODE = #{tb1065Code,jdbcType=VARCHAR} AND ${columnName} = #{plate,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectReality"  resultType="com.gridnt.pdms.domain.Physconnview">
+        select A.F1046_CODE_A,A.F1046_DESC_A,A.F1046_CODE_B , A.F1046_DESC_B, B.F1051_NAME ,
+        C.F1046_NAME F1046_NAME_A,D.F1046_NAME F1046_NAME_B,E.F1052_NO, B.F1048_NO_A,B.F1048_NO_B,
+        F.F1006_CODE F1006_CODE_A,G.F1006_CODE F1006_CODE_B,B.F1016_STATUSCODE
+        from TB1073_LPPBIVIEW A,TB1053_PHYSCONNVIEW B ,TB1046_IEDVIEW C, TB1046_IEDVIEW D ,
+        TB1052_CORE E ,TB1048_PORTVIEW F,TB1048_PORTVIEW G WHERE
+        A.F1053_CODE = B.F1053_CODE AND B.F1053_CODE = E.F1053_CODE
+        AND A.F1046_CODE_A = C.F1046_CODE
+        AND A.F1046_CODE_B = D.F1046_CODE
+        AND C.F1041_CODE = B.F1041_CODE AND D.F1041_CODE = B.F1041_CODE
+        AND B.F1048_CODE_A = F.F1048_CODE AND B.F1048_CODE_B=G.F1048_CODE
+        AND A.F1065_CODE=#{tb1065Code,jdbcType=VARCHAR}
+    </select>
+
+</mapper>

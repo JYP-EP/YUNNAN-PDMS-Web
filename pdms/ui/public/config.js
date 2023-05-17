@@ -1,0 +1,29 @@
+// 打包后可配置
+window.WebConfig={
+  //websocket连接配置
+  websocketIp:"ws://192.168.0.108:8086",
+  //菜单配置 首页、状态监测、通信状态、智能运维、运维文件、定值校核、故障分析  activeIndex2 默认打开的页面
+  menuconfig:{
+    index:true,
+    substation:true,
+    commStatus:true,
+    monitor:true,
+    alert:true,
+    constantValue:true,
+    Faultanalysis:true,
+    activeIndex2:'index'
+  },
+  //装置类型配置
+  IedType:[
+    {type:"0",name:"通用保护装置"},{type:"1",name:"母差保护"},{type:"2",name:"主变保护"}
+    ,{type:"3",name:"线路保护"},{type:"4",name:"断路器保护"},{type:"5",name:"母联保护"}
+    ,{type:"6",name:"母分保护"},{type:"7",name:"备自投"},{type:"8",name:"稳控"}
+    ,{type:"9",name:"低周减载"},{type:"10",name:"主变后备保护"},{type:"11",name:"线路后备保护和辅助装置"}
+    ,{type:"20",name:"通用智能终端"},{type:"21",name:"断路器智能终端"},{type:"22",name:"母线智能终端"}
+    ,{type:"23",name:"主变非电量保护/主变本体智能终端"},{type:"30",name:"通用合并单元"},{type:"31",name:"电流合并单元"}
+    ,{type:"32",name:"电压合并单元"},{type:"33",name:"主变本体合并单元"},{type:"40",name:"通用合并智能终端"}
+    ,{type:"41",name:"断路器合并智能终端"},{type:"42",name:"母线合并智能终端"},{type:"43",name:"主变非电量保护/主变本体合并智能终端"}
+    ,{type:"50",name:"测控装置"},{type:"60",name:"交换机"},{type:"61",name:"光纤配线架"}
+    ,{type:"62",name:"采集器"},{type:"63",name:"管理单元"}
+  ]
+}

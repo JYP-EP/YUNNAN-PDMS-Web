@@ -1,0 +1,34 @@
+/*
+* HelloWorld入门示例
+*/
+
+//使用proto3语法
+syntax = "proto3";
+
+//proto包名
+package domain;
+//生成多个Java文件
+option java_multiple_files = true;
+//指定Java包名
+option java_package = "com.pdms.grpc.domain";
+//指定Java输出类名
+option java_outer_classname = "VisitationProto";
+
+
+
+//gRPC服务定义
+service Visitation {
+  //gRPC服务方法定义 - Unary
+  rpc GetVisitationStatistics (VisitationRequest) returns (VisitationReply) {}
+}
+
+//请求参数定义
+message VisitationRequest {
+  string substationId = 1;
+}
+
+//响应结果定义
+message VisitationReply {
+  //巡视率
+  string visitationRate = 1;
+}

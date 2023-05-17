@@ -1,0 +1,48 @@
+.module-title{
+  width: 55%;
+  padding: 0.5% 0px 0.5% 3%;
+  height: 8%;
+  font-size: 15px;
+  color: #28c8f9;
+  background-image: url('../../images/gridnt/dashboard/title_bk.png');
+  -moz-background-image: url('../../images/gridnt/dashboard/title_bk.png');
+  background-size: 100% 100%;
+  -moz-background-size: 100% 100%;
+
+}
+
+.div-corner{
+  position: absolute;
+  width: 15%;
+  height: 16%;
+  background-size: 100% 100%;
+  -moz-background-size: 100% 100%;
+}
+
+.corner-lt{
+  background-image: url("../../images/gridnt/dashboard/lt.png");
+  -moz-background-image: url("../../images/gridnt/dashboard/lt.png");
+  top: 0%;
+  left: -0.5%;
+}
+
+.corner-rt{
+  background-image: url("../../images/gridnt/dashboard/rt.png");
+  -moz-background-image: url("../../images/gridnt/dashboard/rt.png");
+  top: 0%;
+  right: -0.5%;
+}
+
+.corner-lb{
+  background-image: url("../../images/gridnt/dashboard/lb.png");
+  -moz-background-image: url("../../images/gridnt/dashboard/lb.png");
+  bottom: 0%;
+  left: -0.5%;
+}
+
+.corner-rb{
+  background-image: url("../../images/gridnt/dashboard/rb.png");
+  -moz-background-image: url("../../images/gridnt/dashboard/rb.png");
+  bottom: 0%;
+  right: -0.5%;
+}

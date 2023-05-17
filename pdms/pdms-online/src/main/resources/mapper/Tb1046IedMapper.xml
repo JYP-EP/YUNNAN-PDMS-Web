@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gridnt.pdms.mapper.Tb1046IedMapper">
+    <select id="selectSendOpticalFiber" parameterType="java.lang.String" resultType="java.util.Map">
+        SELECT A.* ,'发送' as TYPE ,  B.F1046_DESC AS  F1046_DESC_A, C.F1046_DESC AS  F1046_DESC_B ,
+        B.F1046_NAME AS  F1046_NAME_A, C.F1046_NAME AS  F1046_NAME_B FROM
+        TB1053_PHYSCONNLISTVIEW A LEFT JOIN TB1046_IED B ON A.F1046_CODE_A = B.F1046_CODE
+        LEFT JOIN TB1046_IED C ON A.F1046_CODE_B = C.F1046_CODE
+        WHERE F1046_CODE_A=#{f1046Id,jdbcType=VARCHAR}
+    </select>
+    <select id="selectReceiveOpticalFiber" parameterType="java.lang.String" resultType="java.util.Map">
+        SELECT A.* ,'接收' as TYPE, B.F1046_DESC AS  F1046_DESC_A, C.F1046_DESC AS  F1046_DESC_B ,
+        B.F1046_NAME AS  F1046_NAME_A, C.F1046_NAME AS  F1046_NAME_B FROM
+        TB1053_PHYSCONNLISTVIEW A LEFT JOIN TB1046_IED B ON A.F1046_CODE_A = B.F1046_CODE
+        LEFT JOIN TB1046_IED C ON A.F1046_CODE_B = C.F1046_CODE
+        WHERE A.F1046_CODE_B=#{f1046Id,jdbcType=VARCHAR}
+    </select>
+    <select id="selectSendLogic" parameterType="java.lang.String" resultType="java.util.Map">
+        SELECT A.* , B.F1046_NAME AS  F1046_NAME_SELF, C.F1046_NAME AS  F1046_NAME_OPPOSITE FROM
+        TB1065_LOGICALLINKLISTVIEW A LEFT JOIN TB1046_IED B ON A.F1046_CODE_SELF = B.F1046_CODE
+        LEFT JOIN TB1046_IED C ON A.F1046_CODE_OPPOSITE = C.F1046_CODE
+        WHERE A.F1046_CODE_SELF=#{f1046Id,jdbcType=VARCHAR} AND A.F1065_SEND_RECV=#{type,jdbcType=VARCHAR}
+        ORDER BY F1046_NAME_OPPOSITE DESC,F1065_TYPE DESC
+    </select>
+</mapper>

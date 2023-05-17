@@ -1,0 +1,57 @@
+version: '3'
+services:
+  ruoyiapp:
+    image: gridnt_ruoyi:heze1.0
+    container_name: ruoyiapp
+    privileged: true
+    environment:
+      - TZ=Asia/Shanghai
+    external_links:
+      - pomdredis:redis.host
+      - pomdmysqldb:db.host
+    mem_limit: 5G
+    ports:
+      - 8080:8080
+    networks:
+      - custom_net
+    restart: always
+  pdmsapp:
+    image: gridnt_pdms:heze1.0
+    container_name: pdmsapp
+    privileged: true
+    environment:
+      - TZ=Asia/Shanghai
+      - JDBC_URL1=192.168.8.208:3306
+      - JDBC_USER1=root
+      - JDBC_PASSWORD1=root
+      - GRPC_HOST=192.168.8.208
+      - GRPC_PORT=8087
+    external_links:
+      - pomdredis:redis.host
+      - pomdmysqldb:db.host
+      - minio:minio.host
+    mem_limit: 5G
+    ports:
+      - 8888:8888
+    networks:
+      - custom_net
+    restart: always
+  pdmsui:
+    image: gridnt_ui:heze1.0
+    container_name: pdmsui
+    privileged: true
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - /home/gridnt/heze/mysql_dbinit/nginxserver.conf:/etc/nginx/conf.d/nginxserver.conf
+      - /home/gridnt/heze/mysql_dbinit/www:/data/nginx/www:rw
+    ports:
+      - 81:81
+    networks:
+      - custom_net
+    restart: always
+networks:
+  custom_net:
+    external:
+      name: pomd-web
+

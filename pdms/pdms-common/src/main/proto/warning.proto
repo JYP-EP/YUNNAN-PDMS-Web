@@ -1,0 +1,59 @@
+/*
+* HelloWorld入门示例
+*/
+
+//使用proto3语法
+syntax = "proto3";
+
+//proto包名
+package domain;
+//生成多个Java文件
+option java_multiple_files = true;
+//指定Java包名
+option java_package = "com.pdms.grpc.domain";
+//指定Java输出类名
+option java_outer_classname = "WarningProto";
+
+
+
+//gRPC服务定义
+service Warning {
+
+  //gRPC服务方法定义 - Unary
+  rpc GetWarningStatistics (WarningRequest) returns (WarningAndLockReply) {}
+  //gRPC服务方法定义 - Unary,获取
+  rpc GetSubstationWarningList (WarningListRequest) returns (WarningListReply) {}
+
+}
+
+//请求站所参数定义
+message WarningRequest {
+  string substationId = 1;
+}
+
+//响应结果定义
+message WarningAndLockReply {
+  //告警条数
+  string warningNumber = 1;
+  //闭锁条数
+  string lockNumber = 2;
+  //保护状态统计
+  string procStatusNumber = 3;
+}
+
+//请求站所告警统计列表参数定义
+message  WarningListRequest{
+
+}
+message WarningListReply {
+  repeated WarningItemReply reply = 1;
+}
+//站所告警统计列表响应结果定义
+message WarningItemReply {
+  //站所名称
+  string stationName = 1;
+  //告警分类
+  string type = 2;
+  //告警数量
+  string warningNumber = 3;
+}

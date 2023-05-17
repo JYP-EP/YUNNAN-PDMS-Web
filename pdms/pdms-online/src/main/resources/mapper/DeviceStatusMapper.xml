@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gridnt.pdms.mapper.DeviceStatusMapper">
+
+    <select id="getTB1016Points" resultType="java.util.Map" parameterType="java.lang.String">
+        <![CDATA[
+            select A.* ,B.F1018_NOALARM from TB1016_STATEDATAVIEW A ,TB1018_STATEVALUE B where ${appendSql}
+            AND A.F1016_CODE = B.F1016_CODE AND A.F1046_CODE= #{f1046Code,jdbcType=VARCHAR}
+            AND A.F1016_RESERVE = 0
+        ]]>
+    </select>
+
+    <select id="selectBackboard" resultType="java.util.Map" parameterType="java.lang.String">
+        select B.* from TB1047_BOARDVIEW A,TB1048_PORTVIEW B WHERE A.F1047_CODE = B.F1047_CODE
+        AND A.F1046_CODE=#{f1046Code,jdbcType=VARCHAR}  ORDER BY A.F1047_CODE ASC, B.F1048_CODE ASC, B.F1048_NO ASC
+    </select>
+
+    <select id="getTB1006Points" resultType="java.util.Map" parameterType="java.lang.String">
+        <![CDATA[
+            select  A.* ,B.F1017_NOALARM from TB1006_ANALOGDATAVIEW A,TB1017_ANALOGVALUE B
+            where ${appendSql} AND A.F1006_CODE = B.F1006_CODE
+            AND A.F1046_CODE= #{f1046Code,jdbcType=VARCHAR}
+            AND A.F1006_RESERVE = 0
+        ]]>
+    </select>
+
+    <select id="loadHistoryEvent" parameterType="java.util.Map" resultType="java.util.Map">
+        <![CDATA[
+            select * from TB_HIS_EVENT where MEMBER0 = #{map.currentF1006Code,jdbcType=VARCHAR}
+            AND CONCAT(YMD,HMSMS) >= #{map.startTm,jdbcType=VARCHAR} AND
+            CONCAT(YMD,HMSMS) <= #{map.endTm,jdbcType=VARCHAR}
+        ]]>
+
+    </select>
+
+    <select id="loadDetail" parameterType="java.lang.String" resultType="com.gridnt.pdms.domain.Tb1006AnalogDetail">
+        select * from TB1006_ANALOGDATAVIEW A left join TB1017_ANALOGVALUE B
+        ON A.F1006_CODE = B.F1006_CODE WHERE A.F1006_CODE=#{f1006Code,jdbcType=VARCHAR}
+    </select>
+
+</mapper>

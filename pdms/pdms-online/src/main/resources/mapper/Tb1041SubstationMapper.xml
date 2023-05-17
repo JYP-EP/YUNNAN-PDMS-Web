@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gridnt.pdms.mapper.Tb1041SubstationMapper">
+<!--    <resultMap type="Tb1041Substation" id="Tb1041SubstationResult">-->
+<!--        <result property="f1041Code"  column="F1041_CODE"    />-->
+<!--        <result property="f1041Name"  column="F1041_NAME"    />-->
+<!--        <result property="f1041Desc"  column="F1041_DESC"    />-->
+<!--        <result property="f1041Dqname"  column="F1041_DQDESC"    />-->
+<!--        <result property="f1041Dqdesc"  column="F1041_DQDESC"    />-->
+<!--        <result property="f1041Company"  column="F1041_COMPANY"    />-->
+<!--        <result property="f1041Voltageh"  column="F1041_VOLTAGEH"    />-->
+<!--        <result property="f1041Voltagem"  column="F1041_VOLTAGEM"    />-->
+<!--        <result property="f1041Voltagel"  column="F1041_VOLTAGEL"    />-->
+<!--        <result property="f1041Keydesc"  column="F1041_KEYDESC"    />-->
+<!--    </resultMap>-->
+    <select id="getCrcData" resultType="TbCrc">
+
+        SELECT
+            F1026_BASEVAL scdCrc ,
+            F1019_VAL iedCrc,
+            TB1046_IED.F1046_DESC iedname
+
+        FROM
+            TB1026_STRINGDATAVIEW,TB1019_STRINGVALUE ,TB1046_IED
+
+        WHERE
+            TB1019_STRINGVALUE.F1026_CODE = TB1026_STRINGDATAVIEW.F1026_CODE
+          and    TB1026_STRINGDATAVIEW.F1026_PARENT = TB1046_IED.F1046_CODE
+          and TB1026_STRINGDATAVIEW.F1026_BASEVAL is not NULL
+    </select>
+    <select id="getDivision" resultType="String">
+        select
+            ts.F1041_DQDESC
+        from
+            TB1041_SUBSTATION ts
+        where
+            F1041_DQDESC is not null
+        group by
+            F1041_DQDESC
+    </select>
+    <select id="getDQDescList" resultType="java.lang.String">
+        SELECT DISTINCT F1041_DQDESC FROM `TB1041_SUBSTATION` ORDER BY F1041_DQDESC DESC
+    </select>
+</mapper>

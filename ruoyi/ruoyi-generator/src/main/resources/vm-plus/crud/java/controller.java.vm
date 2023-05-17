@@ -1,0 +1,200 @@
+package ${packageName}.controller;
+
+import java.util.Date;
+import java.util.List;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.exception.CustomException;
+import com.ruoyi.common.utils.SecurityUtils;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.ruoyi.common.annotation.Log;
+import com.ruoyi.common.core.controller.BaseController;
+##import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.enums.BusinessType;
+import ${packageName}.domain.${ClassName};
+import ${packageName}.service.I${ClassName}Service;
+##import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.gridnt.common.web.ResponseDTO;
+import com.gridnt.common.web.annotation.MultiRequestBody;
+import com.gridnt.common.web.WebUtils;
+
+/**
+ * ${functionName}Controller
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@RestController
+@RequestMapping("/${moduleName}/{version}/${businessName}")
+public class ${ClassName}Controller extends BaseController {
+
+    @Autowired
+    private I${ClassName}Service baseService;
+
+    /**
+     * 查询${functionName}列表
+     *
+     * @param version
+     * @param page
+     * @param ${className}
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('${permissionPrefix}:list')")
+    @PostMapping("/list")
+    public ResponseDTO<IPage<${ClassName}>> list(@PathVariable("version") String version, @MultiRequestBody("page") Page<${ClassName}> page, @MultiRequestBody("entity") ${ClassName} ${className}) {
+        final QueryWrapper<${ClassName}> queryWrapper = Wrappers.query();
+#foreach($column in $columns)
+#set($queryType=$column.queryType)
+#set($javaField=$column.javaField)
+#set($javaType=$column.javaType)
+#set($columnName=$column.columnName)
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+#if($column.query)
+#if($column.queryType == "EQ")
+        // 进行$AttrName的EQ查询
+        queryWrapper.eq(${className}.get$AttrName() != null#if($javaType == 'String' ) && !"".equals(${className}.get$AttrName().trim())#end, "$columnName", ${className}.get$AttrName());
+#elseif($queryType == "NE")
+        // 进行$AttrName的NE查询
+        queryWrapper.ne(${className}.get$AttrName() != null#if($javaType == 'String' ) && !"".equals(${className}.get$AttrName().trim())#end, "$columnName", ${className}.get$AttrName());
+#elseif($queryType == "GT")
+        // 进行$AttrName的GT查询
+        queryWrapper.gt(${className}.get$AttrName() != null#if($javaType == 'String' ) && !"".equals(${className}.get$AttrName().trim())#end, "$columnName", ${className}.get$AttrName());
+#elseif($queryType == "GTE")
+        // 进行$AttrName的GTE查询
+        queryWrapper.ge(${className}.get$AttrName() != null#if($javaType == 'String' ) && !"".equals(${className}.get$AttrName().trim())#end, "$columnName", ${className}.get$AttrName());
+#elseif($queryType == "LT")
+        // 进行$AttrName的LT查询
+        queryWrapper.lt(${className}.get$AttrName() != null#if($javaType == 'String' ) && !"".equals(${className}.get$AttrName().trim())#end, "$columnName", ${className}.get$AttrName());
+#elseif($queryType == "LTE")
+        // 进行$AttrName的LTE查询
+        queryWrapper.le(${className}.get$AttrName() != null#if($javaType == 'String' ) && !"".equals(${className}.get$AttrName().trim())#end, "$columnName", ${className}.get$AttrName());
+#elseif($queryType == "LIKE")
+        // 进行$AttrName的LIKE查询
+        queryWrapper.like(${className}.get$AttrName() != null#if($javaType == 'String' ) && !"".equals(${className}.get$AttrName().trim())#end, "$columnName", ${className}.get$AttrName());
+#elseif($queryType == "BETWEEN")
+        // 进行$AttrName的区间查询
+        String begin$AttrName = (String) ${className}.getParams().get("begin$AttrName");
+        String end$AttrName = (String) ${className}.getParams().get("end$AttrName");
+        queryWrapper.gt(begin$AttrName != null && !"".equals(begin$AttrName.trim()), "$columnName", begin$AttrName).le(end$AttrName != null && !"".equals(end$AttrName.trim()), "$columnName", end$AttrName);
+#end
+#end
+#end
+        final Page<${ClassName}> result = baseService.page(page, queryWrapper);
+        return WebUtils.createSuccessResponse(result);
+    }
+
+##    /**
+##     * 导出${functionName}列表
+##     */
+##    @PreAuthorize("@ss.hasPermi('${permissionPrefix}:export')")
+##    @Log(title = "${functionName}" , businessType = BusinessType.EXPORT)
+##    @GetMapping("/export")
+##    public AjaxResult export(@PathVariable("version") String version, ${ClassName} ${className}) {
+##        List<${ClassName}> list = baseService.select${ClassName}List(${className});
+##        ExcelUtil<${ClassName}> util = new ExcelUtil<${ClassName}>(${ClassName}. class);
+##        return util.exportExcel(list, "${functionName}数据");
+##    }
+
+    /**
+     * 获取${functionName}详细信息
+     *
+     * @param version
+     * @param {${pkColumn.javaField}}
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('${permissionPrefix}:query')")
+    @GetMapping(value = "/{${pkColumn.javaField}}")
+    public ResponseDTO<${ClassName}> get(@PathVariable("version") String version, @PathVariable("${pkColumn.javaField}") ${pkColumn.javaType} ${pkColumn.javaField}) {
+        ${ClassName} entity = baseService.getById(${pkColumn.javaField});
+        if (entity == null) {
+            throw new CustomException("无法查得指定的${functionName}");
+        }
+        return WebUtils.createSuccessResponse(entity);
+    }
+
+    /**
+     * 新增${functionName}
+     *
+     * @param version
+     * @param ${className}
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('${permissionPrefix}:insert')")
+    @Log(title = "${functionName}" , businessType = BusinessType.INSERT)
+    @PostMapping
+    public ResponseDTO<${ClassName}> insert(@PathVariable("version") String version, @RequestBody ${ClassName} ${className}) {
+#foreach ($column in $columns)
+#if($column.javaField == 'createTime')
+        ${className}.setCreateTime(new Date());
+#end
+#if($column.javaField == 'createBy')
+        ${className}.setCreateBy(SecurityUtils.getUsername());
+#end
+#end
+        boolean result = baseService.save(${className});
+        if (result) {
+            return WebUtils.createSuccessResponse(${className});
+        }
+        throw new CustomException("插入${functionName}失败");
+    }
+
+    /**
+     * 修改${functionName}
+     *
+     * @param version
+     * @param ${className}
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('${permissionPrefix}:update')")
+    @Log(title = "${functionName}" , businessType = BusinessType.UPDATE)
+    @PutMapping
+    public ResponseDTO<${ClassName}> update(@PathVariable("version") String version, @RequestBody ${ClassName} ${className}) {
+        if (${className}.getId() != null){
+#foreach ($column in $columns)
+#if($column.javaField == 'updateTime')
+            ${className}.setUpdateTime(new Date());
+#end
+#if($column.javaField == 'updateBy')
+            ${className}.setUpdateBy(SecurityUtils.getUsername());
+#end
+#end
+            boolean result = baseService.updateById(${className});
+            if (result) {
+                return WebUtils.createSuccessResponse(${className});
+            }
+            throw new CustomException("更新${functionName}失败");
+        } else{
+            throw new CustomException("无法确定${functionName}的唯一标识");
+        }
+    }
+
+    /**
+     * 删除${functionName}
+     *
+     * @param version
+     * @param ${pkColumn.javaField}s
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('${permissionPrefix}:remove')")
+    @Log(title = "${functionName}" , businessType = BusinessType.DELETE)
+    @DeleteMapping("/{${pkColumn.javaField}s}")
+    public ResponseDTO<List<${pkColumn.javaType}>> remove(@PathVariable("version") String version, @PathVariable List<${pkColumn.javaType}> ${pkColumn.javaField}s) {
+        boolean result = baseService.removeByIds(${pkColumn.javaField}s);
+        if (result) {
+            return WebUtils.createSuccessResponse(${pkColumn.javaField}s);
+        }
+        throw new CustomException("删除${functionName}失败");
+    }
+}

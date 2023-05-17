@@ -1,0 +1,8 @@
+.diagram-container{
+  height: calc(100vh - 155px);
+  width: 100%;
+  background-color: transparent;
+}
+.page-div {
+  background-color: transparent;
+}

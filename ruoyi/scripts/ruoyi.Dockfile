@@ -1,0 +1,22 @@
+FROM 192.168.8.200:5000/adoptopenjdk/openjdk11:11.0.9.1_1
+COPY  admin  /usr/local/admin/
+
+
+RUN chmod 777 /usr/local/*  && \
+    chmod 777 /usr/local/admin/*   && \
+    echo 'Asia/Shanghai' >/etc/timezone
+
+#################连接mysql
+ENV  JDBC_URL=jdbc:mysql://db.host:3306/sasac?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&allowMultiQueries=true&autoReconnect=true&failOverReadOnly=false&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull
+ENV  JDBC_USER=root
+ENV  JDBC_PASSWORD=Root_123456
+
+##################连接redis
+ENV REDIS_HOST=redis.host
+#解决jdk11启动界面报错
+ENV JAVA_OPTS="-server  -Dfile.encoding=UTF-8 -Xms2048m -Xmx2048m -Xss512k -Djava.awt.headless=true"
+###################设置默认字符集
+ENV LANG=zh_CN.UTF-8
+### 应用端口
+EXPOSE 8080
+ENTRYPOINT  ["java","-jar","/usr/local/admin/ruoyi-admin.jar"]
